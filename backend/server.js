@@ -7,7 +7,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://post-frontend.onrender.com"],
+    origin: ["http://localhost:3000", "https://pe-demo-frontend.onrender.com/"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
