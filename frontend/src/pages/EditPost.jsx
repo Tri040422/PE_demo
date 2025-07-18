@@ -1,38 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import API from "../api"; // Import the centralized API URL
+import { useParams, useNavigate } from "react-router-dom";
+import API from "../api";
 
-function CreatePost() {
-  const [post, setPost] = useState({ name: "", description: "", image: "" });
+function EditPost() {
+  const [post, setPost] = useState({});
+  const { id } = useParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch all posts then find the one matching the id
+    axios.get(`${API}?search=`).then((res) => {
+      const found = res.data.find((p) => p._id === id);
+      setPost(found);
+    });
+  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post(API, post);
+    await axios.put(`${API}/${id}`, post);
     navigate("/");
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Create Post</h2>
+      <h2>Edit Post</h2>
       <input
-        placeholder="Name"
-        required
+        value={post.name || ""}
         onChange={(e) => setPost({ ...post, name: e.target.value })}
       />
       <textarea
-        placeholder="Description"
-        required
+        value={post.description || ""}
         onChange={(e) => setPost({ ...post, description: e.target.value })}
-      ></textarea>
+      />
       <input
-        placeholder="Image URL (optional)"
+        value={post.image || ""}
         onChange={(e) => setPost({ ...post, image: e.target.value })}
       />
-      <button type="submit">Save</button>
+      <button type="submit">Update</button>
     </form>
   );
 }
 
-export default CreatePost;
+export default EditPost;
